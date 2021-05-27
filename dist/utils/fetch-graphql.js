@@ -13,7 +13,7 @@ var _axios = _interopRequireDefault(require("axios"));
 
 var _axiosRateLimit = _interopRequireDefault(require("axios-rate-limit"));
 
-var _proxyAgent = _interopRequireDefault(require("proxy-agent"));
+var _proxyAgent = require("proxy-agent");
 
 var _chalk = require("chalk");
 
@@ -35,8 +35,8 @@ const moduleHelpers = {
     if (!http) {
       console.log('PUTAIN DE PROXY');
       http = (0, _axiosRateLimit.default)(_axios.default.create({
-        httpAgent: new _proxyAgent.default(process.env.http_proxy),
-        httpsAgent: new _proxyAgent.default(process.env.https_proxy)
+        httpAgent: new _proxyAgent(process.env.http_proxy),
+        httpsAgent: new _proxyAgent(process.env.https_proxy)
       }), {
         maxRPS: limit
       });
@@ -603,6 +603,8 @@ const fetchGraphql = async ({
     } = _url.default.parse(url);
 
     const responsePath = response.request.path;
+
+    console.log({responsePath,path, url });
 
     if (path !== responsePath && responsePath !== undefined) {
       throw new Error(`GraphQL request was redirected to ${responsePath}`);
