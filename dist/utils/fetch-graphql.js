@@ -13,6 +13,8 @@ var _axios = _interopRequireDefault(require("axios"));
 
 var _axiosRateLimit = _interopRequireDefault(require("axios-rate-limit"));
 
+var _proxyAgent = _interopRequireDefault(require("proxy-agent"));
+
 var _chalk = require("chalk");
 
 var _formatLogMessage = require("./format-log-message");
@@ -32,8 +34,8 @@ const moduleHelpers = {
   getHttp: (limit = 50) => {
     if (!http) {
       http = (0, _axiosRateLimit.default)(_axios.default.create({
-        httpAgent: new ProxyAgent(process.env.http_proxy),
-        httpsAgent: new ProxyAgent(process.env.https_proxy)
+        httpAgent: new _proxyAgent.default(process.env.http_proxy),
+        httpsAgent: new _proxyAgent.default(process.env.https_proxy)
       }), {
         maxRPS: limit
       });
