@@ -33,6 +33,7 @@ let http = null; // this is an object so that we can override getHttp in our tes
 const moduleHelpers = {
   getHttp: (limit = 50) => {
     if (!http) {
+      console.log('PUTAIN DE PROXY');
       http = (0, _axiosRateLimit.default)(_axios.default.create({
         httpAgent: new _proxyAgent.default(process.env.http_proxy),
         httpsAgent: new _proxyAgent.default(process.env.https_proxy)
@@ -363,6 +364,18 @@ ${getLowerRequestConcurrencyOptionMessage()}`, {
     });
     return;
   }
+
+  console.error(e);
+  console.log('reporter', reporter);
+  console.log('url', url);
+  console.log('timeout', timeout);
+  console.log('variables', variables);
+  console.log('pluginOptions', pluginOptions);
+  console.log('query', query);
+  console.log('response', response);
+  console.log('errorContext', errorContext);
+  console.log('isFirstRequest', isFirstRequest);
+  console.log('headers', headers);
 
   const redirected = e.message.includes(`GraphQL request was redirected`);
 
