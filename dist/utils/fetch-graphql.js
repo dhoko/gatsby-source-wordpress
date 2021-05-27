@@ -13,7 +13,6 @@ var _axios = _interopRequireDefault(require("axios"));
 
 var _axiosRateLimit = _interopRequireDefault(require("axios-rate-limit"));
 
-
 var _chalk = require("chalk");
 
 var _formatLogMessage = require("./format-log-message");
@@ -586,8 +585,11 @@ const fetchGraphql = async ({
     } = _url.default.parse(url);
 
     const responsePath = response.request.path;
-
-    console.log({responsePath,path, url });
+    console.log({
+      responsePath,
+      path,
+      url
+    });
 
     if (path !== responsePath && responsePath !== undefined && responsePath !== url) {
       throw new Error(`GraphQL request was redirected to ${responsePath}`);

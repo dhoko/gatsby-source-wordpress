@@ -28,6 +28,8 @@ const readChunk = require(`read-chunk`);
 
 const fileType = require(`file-type`);
 
+const ProxyAgent = require('proxy-agent');
+
 const {
   createFileNode
 } = require(`gatsby-source-filesystem/create-file-node`);
@@ -201,6 +203,10 @@ const requestRemoteNode = (url, headers, tmpFilename, httpOpts, attempt = 1) => 
     headers,
     timeout: CONNECTION_TIMEOUT,
     retries: CONNECTION_RETRY_LIMIT,
+    agent: {
+      http: new ProxyAgent(process.env.http_proxy),
+      https: new ProxyAgent(process.env.https_proxy)
+    },
     ...httpOpts
   });
   const fsWriteStream = fs.createWriteStream(tmpFilename);
