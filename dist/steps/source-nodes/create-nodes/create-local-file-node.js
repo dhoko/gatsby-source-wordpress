@@ -297,6 +297,7 @@ const createLocalFileNode = async ({
       // using the htaccess creds will throw 400 errors
 
       const shouldUseHtaccessCredentials = wpUrlHostname === mediaItemHostname;
+      const httpOpts = pluginOptions.httpOpts;
       const auth = htaccessCredentials && shouldUseHtaccessCredentials ? {
         htaccess_pass: htaccessCredentials === null || htaccessCredentials === void 0 ? void 0 : htaccessCredentials.password,
         htaccess_user: htaccessCredentials === null || htaccessCredentials === void 0 ? void 0 : htaccessCredentials.username
@@ -305,6 +306,7 @@ const createLocalFileNode = async ({
       const node = await (0, _index.default)({
         url: mediaItemUrl,
         auth,
+        httpOpts,
         ...createFileNodeRequirements,
         pluginOptions
       });

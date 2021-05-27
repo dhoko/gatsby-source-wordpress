@@ -28,8 +28,6 @@ const readChunk = require(`read-chunk`);
 
 const fileType = require(`file-type`);
 
-const ProxyAgent = require('proxy-agent');
-
 const {
   createFileNode
 } = require(`gatsby-source-filesystem/create-file-node`);
@@ -203,10 +201,6 @@ const requestRemoteNode = (url, headers, tmpFilename, httpOpts, attempt = 1) => 
     headers,
     timeout: CONNECTION_TIMEOUT,
     retries: CONNECTION_RETRY_LIMIT,
-    agent: {
-      http: new ProxyAgent(process.env.http_proxy),
-      https: new ProxyAgent(process.env.https_proxy)
-    },
     ...httpOpts
   });
   const fsWriteStream = fs.createWriteStream(tmpFilename);
@@ -261,6 +255,7 @@ async function processRemoteNode({
   createNode,
   parentNodeId,
   auth = {},
+  httpOpts = {},
   httpHeaders = {},
   createNodeId,
   ext,
@@ -278,8 +273,6 @@ async function processRemoteNode({
   } // Add htaccess authentication if passed in. This isn't particularly
   // extensible. We should define a proper API that we validate.
 
-
-  const httpOpts = {};
 
   if (auth !== null && auth !== void 0 && auth.htaccess_pass && auth !== null && auth !== void 0 && auth.htaccess_user) {
     headers[`Authorization`] = `Basic ${(0, _btoa.default)(`${auth.htaccess_user}:${auth.htaccess_pass}`)}`;
@@ -389,6 +382,7 @@ module.exports = ({
   getCache,
   parentNodeId = null,
   auth = {},
+  httpOpts = {},
   httpHeaders = {},
   createNodeId,
   ext = null,
@@ -458,6 +452,7 @@ module.exports = ({
     parentNodeId,
     createNodeId,
     auth,
+    httpOpts,
     httpHeaders,
     ext,
     name,
