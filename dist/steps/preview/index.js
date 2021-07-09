@@ -173,9 +173,8 @@ const createPreviewStatusCallback = ({
 
 const sourcePreview = async ({
   previewData,
-  reporter
-}, {
-  url
+  reporter,
+  actions
 }) => {
   if (previewForIdIsAlreadyBeingProcessed(previewData === null || previewData === void 0 ? void 0 : previewData.id)) {
     return;
@@ -192,35 +191,11 @@ const sourcePreview = async ({
   }
 
   await (0, _fetchNodeUpdates.touchValidNodes)();
-
-  const {
-    hostname: settingsHostname
-  } = _url.default.parse(url);
-
-  const {
-    hostname: remoteHostname
-  } = _url.default.parse(previewData.remoteUrl);
-
   const sendPreviewStatus = createPreviewStatusCallback({
     previewData,
     reporter
-  });
-
-  if (settingsHostname !== remoteHostname) {
-    await sendPreviewStatus({
-      status: `RECEIVED_PREVIEW_DATA_FROM_WRONG_URL`,
-      context: `check that the preview data came from the right URL.`,
-      passedNode: {
-        modified: previewData.modified,
-        databaseId: previewData.parentDatabaseId
-      },
-      graphqlEndpoint: previewData.remoteUrl
-    });
-    reporter.warn((0, _formatLogMessage.formatLogMessage)(`Received preview data from a different remote URL than the one specified in plugin options. \n\n ${_chalk.default.bold(`Remote URL:`)} ${previewData.remoteUrl}\n ${_chalk.default.bold(`Plugin options URL:`)} ${url}`));
-    return;
-  } // this callback will be invoked when the page is created/updated for this node
+  }); // this callback will be invoked when the page is created/updated for this node
   // then it'll send a mutation to WPGraphQL so that WP knows the preview is ready
-
 
   _store.default.dispatch.previewStore.subscribeToPagesCreatedFromNodeById({
     nodeId: previewData.id,
@@ -228,12 +203,23 @@ const sourcePreview = async ({
     sendPreviewStatus
   });
 
-  await (0, _update.fetchAndCreateSingleNode)({
+  const {
+    node
+  } = await (0, _update.fetchAndCreateSingleNode)({
     actionType: `PREVIEW`,
     ...previewData,
     previewParentId: previewData.parentDatabaseId,
     isPreview: true
   });
+
+  if (`unstable_createNodeManifest` in actions) {
+    const manifestId = node.databaseId + previewData.modified;
+    reporter.info((0, _formatLogMessage.formatLogMessage)(`Creating node manifest for ${node.id} with manifestId ${manifestId}`));
+    actions.unstable_createNodeManifest({
+      manifestId,
+      node
+    });
+  }
 };
 /**
  * This is called when the /__refresh endpoint is posted to from WP previews.
@@ -244,16 +230,45 @@ const sourcePreview = async ({
 
 exports.sourcePreview = sourcePreview;
 
-const sourcePreviews = async (helpers, pluginOptions) => {
+const sourcePreviews = async helpers => {
   const {
     webhookBody,
-    reporter
+    reporter,
+    actions
   } = helpers;
   const {
     debug: {
       preview: inPreviewDebugModeOption
-    }
+    },
+    url
   } = (0, _getGatsbyApi.getPluginOptions)();
+
+  const {
+    hostname: settingsHostname
+  } = _url.default.parse(url);
+
+  const {
+    hostname: remoteHostname
+  } = _url.default.parse(webhookBody.remoteUrl);
+
+  if (settingsHostname !== remoteHostname) {
+    const sendPreviewStatus = createPreviewStatusCallback({
+      previewData: webhookBody,
+      reporter
+    });
+    await sendPreviewStatus({
+      status: `RECEIVED_PREVIEW_DATA_FROM_WRONG_URL`,
+      context: `check that the preview data came from the right URL.`,
+      passedNode: {
+        modified: webhookBody.modified,
+        databaseId: webhookBody.parentDatabaseId
+      },
+      graphqlEndpoint: webhookBody.remoteUrl
+    });
+    reporter.warn((0, _formatLogMessage.formatLogMessage)(`Received preview data from a different remote URL than the one specified in plugin options. Preview will not work. Please send preview requests from the WP instance configured in gatsby-config.js.\n\n ${_chalk.default.bold(`Remote URL:`)} ${webhookBody.remoteUrl}\n ${_chalk.default.bold(`Plugin options URL:`)} ${url}\n\n`));
+    return;
+  }
+
   const inPreviewDebugMode = inPreviewDebugModeOption || process.env.WP_GATSBY_PREVIEW_DEBUG;
 
   if (inPreviewDebugMode) {
@@ -335,8 +350,9 @@ const sourcePreviews = async (helpers, pluginOptions) => {
       previewData: { ...previewData,
         token: webhookBody.token
       },
-      reporter
-    }, pluginOptions));
+      reporter,
+      actions
+    }));
   }
 
   await Promise.all([queue.onEmpty(), queue.onIdle()]);

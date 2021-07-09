@@ -141,6 +141,9 @@ const defaultPluginOptions = {
       lazyNodes: false,
       localFile: {
         excludeByMimeTypes: [],
+        httpOptions: {
+          agent: null
+        },
         maxFileSizeBytes: 15728640,
         // 15Mb
         requestConcurrency: 100

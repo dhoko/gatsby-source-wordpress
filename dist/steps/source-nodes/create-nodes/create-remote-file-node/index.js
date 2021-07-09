@@ -77,10 +77,9 @@ let totalJobs = 0;
  * @param  {Reporter} [options.reporter]
  */
 
-const STALL_RETRY_LIMIT = 3;
-const STALL_TIMEOUT = 30000;
-const CONNECTION_RETRY_LIMIT = 5;
-const CONNECTION_TIMEOUT = 30000;
+const STALL_RETRY_LIMIT = process.env.GATSBY_STALL_RETRY_LIMIT ? parseInt(process.env.GATSBY_STALL_RETRY_LIMIT, 10) : 3;
+const STALL_TIMEOUT = process.env.GATSBY_STALL_TIMEOUT ? parseInt(process.env.GATSBY_STALL_TIMEOUT, 10) : 30000;
+const CONNECTION_TIMEOUT = process.env.GATSBY_CONNECTION_TIMEOUT ? parseInt(process.env.GATSBY_CONNECTION_TIMEOUT, 10) : 30000;
 /********************
  * Queue Management *
  ********************/
@@ -171,8 +170,8 @@ async function pushToQueue(task, cb) {
  */
 
 
-const requestRemoteNode = (url, headers, tmpFilename, httpOpts, attempt = 1) => new Promise((resolve, reject) => {
-  let timeout; // Called if we stall for 30s without receiving any data
+const requestRemoteNode = (url, headers, tmpFilename, httpOptions, attempt = 1) => new Promise((resolve, reject) => {
+  let timeout; // Called if we stall without receiving any data
 
   const handleTimeout = async () => {
     fsWriteStream.close();
@@ -180,7 +179,7 @@ const requestRemoteNode = (url, headers, tmpFilename, httpOpts, attempt = 1) => 
 
     if (attempt < STALL_RETRY_LIMIT) {
       // Retry by calling ourself recursively
-      resolve(requestRemoteNode(url, headers, tmpFilename, httpOpts, attempt + 1));
+      resolve(requestRemoteNode(url, headers, tmpFilename, httpOptions, attempt + 1));
     } else {
       processingCache[url] = null;
       totalJobs -= 1;
@@ -199,9 +198,10 @@ const requestRemoteNode = (url, headers, tmpFilename, httpOpts, attempt = 1) => 
 
   const responseStream = got.stream(url, {
     headers,
-    timeout: CONNECTION_TIMEOUT,
-    retries: CONNECTION_RETRY_LIMIT,
-    ...httpOpts
+    timeout: {
+      send: CONNECTION_TIMEOUT
+    },
+    ...httpOptions
   });
   const fsWriteStream = fs.createWriteStream(tmpFilename);
   responseStream.pipe(fsWriteStream); // If there's a 400/500 response or other error.
@@ -255,7 +255,7 @@ async function processRemoteNode({
   createNode,
   parentNodeId,
   auth = {},
-  httpOpts = {},
+  httpOptions = {},
   httpHeaders = {},
   createNodeId,
   ext,
@@ -291,7 +291,7 @@ async function processRemoteNode({
 
   const tmpFilename = createFilePath(pluginCacheDir, `tmp-${digest}`, ext); // Fetch the file.
 
-  const response = await requestRemoteNode(url, headers, tmpFilename, httpOpts);
+  const response = await requestRemoteNode(url, headers, tmpFilename, httpOptions);
 
   if (response.statusCode == 200) {
     // Save the response headers for future requests.
@@ -382,7 +382,6 @@ module.exports = ({
   getCache,
   parentNodeId = null,
   auth = {},
-  httpOpts = {},
   httpHeaders = {},
   createNodeId,
   ext = null,
@@ -390,9 +389,12 @@ module.exports = ({
   reporter,
   pluginOptions
 }) => {
-  var _pluginOptions$type, _pluginOptions$type$M, _pluginOptions$type$M2;
+  var _pluginOptions$type, _pluginOptions$type$M;
 
-  const limit = pluginOptions === null || pluginOptions === void 0 ? void 0 : (_pluginOptions$type = pluginOptions.type) === null || _pluginOptions$type === void 0 ? void 0 : (_pluginOptions$type$M = _pluginOptions$type.MediaItem) === null || _pluginOptions$type$M === void 0 ? void 0 : (_pluginOptions$type$M2 = _pluginOptions$type$M.localFile) === null || _pluginOptions$type$M2 === void 0 ? void 0 : _pluginOptions$type$M2.requestConcurrency;
+  const {
+    requestConcurrency: limit,
+    httpOptions = {}
+  } = (pluginOptions === null || pluginOptions === void 0 ? void 0 : (_pluginOptions$type = pluginOptions.type) === null || _pluginOptions$type === void 0 ? void 0 : (_pluginOptions$type$M = _pluginOptions$type.MediaItem) === null || _pluginOptions$type$M === void 0 ? void 0 : _pluginOptions$type$M.localFile) || {};
 
   if (doneQueueTimeout) {
     // this is to give the bar a little time to wait when there are pauses
@@ -452,7 +454,7 @@ module.exports = ({
     parentNodeId,
     createNodeId,
     auth,
-    httpOpts,
+    httpOptions,
     httpHeaders,
     ext,
     name,

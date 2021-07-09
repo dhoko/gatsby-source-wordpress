@@ -19,19 +19,19 @@ var _progressBarPromise = require("./create-nodes/create-remote-file-node/progre
 
 var _preview = require("../preview");
 
-const sourceNodes = async (helpers, pluginOptions) => {
+const sourceNodes = async helpers => {
   const {
     cache,
     webhookBody
   } = helpers; // if this is a preview we want to process it and return early
 
   if (webhookBody.preview) {
-    await (0, _preview.sourcePreviews)(helpers, pluginOptions);
+    await (0, _preview.sourcePreviews)(helpers);
     return;
   } // if it's not a preview but we have a token
   // we should source any pending previews then continue sourcing
   else if (webhookBody.token && webhookBody.userDatabaseId) {
-      await (0, _preview.sourcePreviews)(helpers, pluginOptions);
+      await (0, _preview.sourcePreviews)(helpers);
     }
 
   const now = Date.now(); // fetch non-node root fields such as settings.
