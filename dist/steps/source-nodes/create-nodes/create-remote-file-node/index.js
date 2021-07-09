@@ -395,6 +395,12 @@ module.exports = ({
     requestConcurrency: limit,
     httpOptions = {}
   } = (pluginOptions === null || pluginOptions === void 0 ? void 0 : (_pluginOptions$type = pluginOptions.type) === null || _pluginOptions$type === void 0 ? void 0 : (_pluginOptions$type$M = _pluginOptions$type.MediaItem) === null || _pluginOptions$type$M === void 0 ? void 0 : _pluginOptions$type$M.localFile) || {};
+  console.log({
+    url,
+    ext,
+    name
+  });
+  console.log('httpOptions', httpOptions);
 
   if (doneQueueTimeout) {
     // this is to give the bar a little time to wait when there are pauses
