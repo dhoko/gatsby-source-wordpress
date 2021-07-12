@@ -482,7 +482,7 @@ When using this option, be sure to gitignore the wordpress-cache directory in th
                       MediaItem: {
                         localFile: {
                           httpOptions: {
-                            agent: {}, // Add your options here :)
+                            agent: {}, // Add your options here
                           },
                         },
                       },
@@ -495,8 +495,7 @@ When using this option, be sure to gitignore the wordpress-cache directory in th
                   type: {
                     MediaItem: {
                       localFile: {
-                        httpOptions: {}, // Add your options here :)
-                        },
+                        httpOptions: {}, // Add your options here
                       },
                     },
                   },
