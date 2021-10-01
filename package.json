@@ -1,0 +1,128 @@
+{
+  "_from": "gatsby-source-wordpress@^5.14.0",
+  "_id": "gatsby-source-wordpress@5.14.0",
+  "_inBundle": false,
+  "_integrity": "sha512-R2oQzujyfQf01kJ0zxyGnqsMssIQFoMuhrD7acBHp1sKQ37/23PzAor8ohNSd/tqZ4J87DQ6UH3Fc4zYLFfbig==",
+  "_location": "/gatsby-source-wordpress",
+  "_phantomChildren": {
+    "ieee754": "1.2.1",
+    "lodash": "4.17.21",
+    "lru-cache": "6.0.0",
+    "strtok3": "6.2.4",
+    "typedarray-to-buffer": "3.1.5"
+  },
+  "_requested": {
+    "type": "range",
+    "registry": true,
+    "raw": "gatsby-source-wordpress@^5.14.0",
+    "name": "gatsby-source-wordpress",
+    "escapedName": "gatsby-source-wordpress",
+    "rawSpec": "^5.14.0",
+    "saveSpec": null,
+    "fetchSpec": "^5.14.0"
+  },
+  "_requiredBy": [
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/gatsby-source-wordpress/-/gatsby-source-wordpress-5.14.0.tgz",
+  "_shasum": "f8a1868194df9ca1cf58e2edf793fdfb43229fce",
+  "_spec": "gatsby-source-wordpress@^5.14.0",
+  "_where": "/home/dhoko/dev/taf/website/proton.me",
+  "author": {
+    "name": "Tyler Barnes",
+    "email": "tylerdbarnes@gmail.com"
+  },
+  "bugs": {
+    "url": "https://github.com/gatsbyjs/gatsby/issues"
+  },
+  "bundleDependencies": false,
+  "dependencies": {
+    "@babel/runtime": "^7.15.4",
+    "@rematch/core": "^1.4.0",
+    "@rematch/immer": "^1.2.0",
+    "async-retry": "^1.3.3",
+    "atob": "^2.1.2",
+    "axios": "^0.21.1",
+    "axios-rate-limit": "^1.3.0",
+    "better-queue": "^3.8.10",
+    "btoa": "^1.2.1",
+    "cache-manager": "^3.4.4",
+    "cache-manager-fs-hash": "^0.0.9",
+    "chalk": "^4.1.2",
+    "cheerio": "^1.0.0-rc.10",
+    "clipboardy": "^2.3.0",
+    "diff": "^5.0.0",
+    "dumper.js": "^1.3.1",
+    "execall": "^2.0.0",
+    "fast-json-stable-stringify": "^2.1.0",
+    "file-type": "^15.0.1",
+    "filesize": "^6.4.0",
+    "fs-extra": "^10.0.0",
+    "gatsby-core-utils": "^2.14.0",
+    "gatsby-image": "^3.11.0",
+    "gatsby-plugin-catch-links": "^3.14.0",
+    "gatsby-source-filesystem": "^3.14.0",
+    "glob": "^7.1.7",
+    "got": "^11.8.2",
+    "graphql-query-compress": "^1.2.4",
+    "lodash": "^4.17.21",
+    "node-fetch": "^2.6.1",
+    "p-queue": "^6.6.2",
+    "read-chunk": "^3.2.0",
+    "replaceall": "^0.1.6",
+    "semver": "^7.3.5",
+    "valid-url": "^1.0.9"
+  },
+  "deprecated": false,
+  "description": "Source data from WordPress in an efficient and scalable way.",
+  "devDependencies": {
+    "@babel/cli": "^7.15.4",
+    "@babel/core": "^7.15.5",
+    "@babel/plugin-proposal-class-properties": "^7.14.0",
+    "@babel/plugin-proposal-private-methods": "^7.14.0",
+    "@types/cache-manager": "^2.10.3",
+    "@types/ink": "^2.0.3",
+    "@types/semver": "^7.3.8",
+    "babel-plugin-import-globals": "^2.0.0",
+    "babel-plugin-module-resolver": "4.1.0",
+    "babel-preset-gatsby": "^1.14.0",
+    "babel-preset-gatsby-package": "^1.14.0",
+    "cross-env": "^7.0.3",
+    "identity-obj-proxy": "^3.0.0",
+    "react-test-renderer": "^16.14.0",
+    "rimraf": "^3.0.2",
+    "tree-kill": "^1.2.2",
+    "wait-on": "^4.0.2"
+  },
+  "engines": {
+    "node": ">=12.13.0"
+  },
+  "gitHead": "f3f1bbc4b75e4ede40500e899449820c958a72ff",
+  "homepage": "https://github.com/gatsbyjs/gatsby/tree/master/packages/gatsby-source-wordpress#readme",
+  "keywords": [
+    "gatsby",
+    "gatsby-plugin",
+    "gatsby-plugin-wordpress",
+    "gatsby-source-wordpress",
+    "wordpress"
+  ],
+  "license": "MIT",
+  "name": "gatsby-source-wordpress",
+  "peerDependencies": {
+    "gatsby": "^3.0.0-next.0",
+    "gatsby-plugin-sharp": "^3.0.0-next.0",
+    "gatsby-transformer-sharp": "^3.0.0-next.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gatsbyjs/gatsby.git",
+    "directory": "packages/gatsby-source-wordpress"
+  },
+  "scripts": {
+    "build": "echo 123",
+    "generate-plugin-options-docs": "echo 123",
+    "prepare": "echo 123",
+    "watch": "echo 123"
+  },
+  "version": "5.14.0"
+}
