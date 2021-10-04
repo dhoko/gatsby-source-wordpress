@@ -170,7 +170,7 @@ async function pushToQueue(task, cb) {
  */
 
 
-const requestRemoteNode = (url, headers, tmpFilename, httpOpts, attempt = 1) => new Promise((resolve, reject) => {
+const requestRemoteNode = (url, headers, tmpFilename, httpOptions, attempt = 1) => new Promise((resolve, reject) => {
   let timeout; // Called if we stall without receiving any data
 
   const handleTimeout = async () => {
@@ -179,7 +179,7 @@ const requestRemoteNode = (url, headers, tmpFilename, httpOpts, attempt = 1) => 
 
     if (attempt < STALL_RETRY_LIMIT) {
       // Retry by calling ourself recursively
-      resolve(requestRemoteNode(url, headers, tmpFilename, httpOpts, attempt + 1));
+      resolve(requestRemoteNode(url, headers, tmpFilename, httpOptions, attempt + 1));
     } else {
       processingCache[url] = null;
       totalJobs -= 1;
@@ -201,7 +201,7 @@ const requestRemoteNode = (url, headers, tmpFilename, httpOpts, attempt = 1) => 
     timeout: {
       send: CONNECTION_TIMEOUT
     },
-    ...httpOpts
+    ...httpOptions
   });
   const fsWriteStream = fs.createWriteStream(tmpFilename);
   responseStream.pipe(fsWriteStream); // If there's a 400/500 response or other error.
@@ -255,6 +255,7 @@ async function processRemoteNode({
   createNode,
   parentNodeId,
   auth = {},
+  httpOptions = {},
   httpHeaders = {},
   createNodeId,
   ext,
@@ -273,8 +274,6 @@ async function processRemoteNode({
   // extensible. We should define a proper API that we validate.
 
 
-  const httpOpts = {};
-
   if (auth !== null && auth !== void 0 && auth.htaccess_pass && auth !== null && auth !== void 0 && auth.htaccess_user) {
     headers[`Authorization`] = `Basic ${(0, _btoa.default)(`${auth.htaccess_user}:${auth.htaccess_pass}`)}`;
   } // Create the temp and permanent file names for the url.
@@ -292,7 +291,7 @@ async function processRemoteNode({
 
   const tmpFilename = createFilePath(pluginCacheDir, `tmp-${digest}`, ext); // Fetch the file.
 
-  const response = await requestRemoteNode(url, headers, tmpFilename, httpOpts);
+  const response = await requestRemoteNode(url, headers, tmpFilename, httpOptions);
 
   if (response.statusCode == 200) {
     // Save the response headers for future requests.
@@ -394,6 +393,8 @@ module.exports = ({
 
   const limit = pluginOptions === null || pluginOptions === void 0 ? void 0 : (_pluginOptions$type = pluginOptions.type) === null || _pluginOptions$type === void 0 ? void 0 : (_pluginOptions$type$M = _pluginOptions$type.MediaItem) === null || _pluginOptions$type$M === void 0 ? void 0 : (_pluginOptions$type$M2 = _pluginOptions$type$M.localFile) === null || _pluginOptions$type$M2 === void 0 ? void 0 : _pluginOptions$type$M2.requestConcurrency;
 
+  const { httpOptions = {} } = pluginOptions?.type?.MediaItem?.localFile || {}
+
   if (doneQueueTimeout) {
     // this is to give the bar a little time to wait when there are pauses
     // between file downloads.
@@ -452,6 +453,7 @@ module.exports = ({
     parentNodeId,
     createNodeId,
     auth,
+    httpOptions,
     httpHeaders,
     ext,
     name,

@@ -151,7 +151,8 @@ const defaultPluginOptions = {
         excludeByMimeTypes: [],
         maxFileSizeBytes: 15728640,
         // 15Mb
-        requestConcurrency: 100
+        requestConcurrency: 100,
+        httpOptions: { agent: null }
       },
       beforeChangeNode: async ({
         remoteNode,
